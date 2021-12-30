@@ -11,11 +11,12 @@
   "dependencies": {
     "@pankod/refine": "^2.0.7",
     "@pankod/refine-nextjs-router": "^2.3.1",
+    "@pankod/refine-simple-rest": "^2.0.7",
     "next": "12.0.7",
     "next-compose-plugins": "^2.2.1",
+    "nookies": "^2.5.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "@pankod/refine-simple-rest": "^2.0.7"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@types/node": "^14.14.13",
