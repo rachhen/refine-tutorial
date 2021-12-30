@@ -26,7 +26,6 @@ export const PostList: React.FC<
 > = ({ initialData }) => {
   const { tableProps } = useTable<IPost>({
     queryOptions: { initialData },
-    syncWithLocation: true,
   });
 
   const categoryIds =
@@ -62,7 +61,7 @@ export const PostList: React.FC<
           title="createdAt"
           render={(value) => <DateField format="LLL" value={value} />}
         />
-        {canAccess?.can && (
+        {/* {canAccess?.can && (
           <Table.Column
             dataIndex="hit"
             title="Hit"
@@ -70,7 +69,7 @@ export const PostList: React.FC<
               <NumberField value={value} options={{ notation: "compact" }} />
             )}
           />
-        )}
+        )} */}
         <Table.Column
           dataIndex={["category", "id"]}
           title="category"

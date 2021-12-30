@@ -5,6 +5,7 @@ import nookies from "nookies";
 import { Refine, usePermissions } from "@pankod/refine";
 import dataProvider from "@pankod/refine-simple-rest";
 import routerProvider from "@pankod/refine-nextjs-router";
+import { liveProvider } from "@pankod/refine-ably";
 import { newEnforcer } from "casbin.js";
 import "@pankod/refine/dist/styles.min.css";
 
@@ -12,8 +13,9 @@ import { authProvider } from "src/authProvider";
 import { API_URL } from "src/constants";
 import { PostCreate, PostEdit, PostList, PostShow } from "@components/posts";
 import { CategoryList } from "@components/categories";
-import { Header } from "@components/header";
 import { adapter, model } from "src/accessControl";
+import { ablyClient } from "src/utility/ablyClient";
+import { CustomSider } from "@components/slider";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -22,7 +24,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       routerProvider={routerProvider}
       dataProvider={dataProvider(API_URL)}
       warnWhenUnsavedChanges={true}
-      // Header={() => <Header role={role} setRole={setRole} />}
+      liveProvider={liveProvider(ablyClient)}
+      liveMode="auto"
+      Sider={CustomSider}
       accessControlProvider={{
         can: async ({ resource, action, params }) => {
           const auth = nookies.get()["auth"];
