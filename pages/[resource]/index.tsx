@@ -23,11 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       resource: query["resource"] as string,
     });
 
-    return {
-      props: {
-        initialData: data,
-      },
-    };
+    return { props: { initialData: data } };
   } catch (error) {
     return { props: {} };
   }

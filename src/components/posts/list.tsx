@@ -13,12 +13,19 @@ import {
   EditButton,
   Space,
   DeleteButton,
+  IResourceComponentsProps,
+  GetListResponse,
 } from "@pankod/refine";
 
 import { ICategory, IPost } from "../../interfaces";
 
-export const PostList: React.FC = () => {
-  const { tableProps } = useTable<IPost>();
+export const PostList: React.FC<
+  IResourceComponentsProps<GetListResponse<IPost>>
+> = ({ initialData }) => {
+  const { tableProps } = useTable<IPost>({
+    queryOptions: { initialData },
+    syncWithLocation: true,
+  });
 
   const categoryIds =
     tableProps?.dataSource?.map((item) => item.category.id) ?? [];
