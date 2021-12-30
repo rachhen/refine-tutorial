@@ -15,6 +15,8 @@ import {
   DeleteButton,
   IResourceComponentsProps,
   GetListResponse,
+  useCan,
+  NumberField,
 } from "@pankod/refine";
 
 import { ICategory, IPost } from "../../interfaces";
@@ -40,6 +42,12 @@ export const PostList: React.FC<
     resource: "categories",
   });
 
+  const { data: canAccess } = useCan({
+    resource: "posts",
+    action: "field",
+    params: { field: "hit" },
+  });
+
   return (
     <List>
       <Table {...tableProps} rowKey="id">
@@ -54,6 +62,15 @@ export const PostList: React.FC<
           title="createdAt"
           render={(value) => <DateField format="LLL" value={value} />}
         />
+        {canAccess?.can && (
+          <Table.Column
+            dataIndex="hit"
+            title="Hit"
+            render={(value: number) => (
+              <NumberField value={value} options={{ notation: "compact" }} />
+            )}
+          />
+        )}
         <Table.Column
           dataIndex={["category", "id"]}
           title="category"

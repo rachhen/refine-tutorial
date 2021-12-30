@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { AppProps } from "next/app";
+import nookies from "nookies";
 
-import { Refine } from "@pankod/refine";
-import routerProvider from "@pankod/refine-nextjs-router";
-
-import "@pankod/refine/dist/styles.min.css";
+import { Refine, usePermissions } from "@pankod/refine";
 import dataProvider from "@pankod/refine-simple-rest";
-import { PostCreate, PostEdit, PostList, PostShow } from "@components/posts";
+import routerProvider from "@pankod/refine-nextjs-router";
+import { newEnforcer } from "casbin.js";
+import "@pankod/refine/dist/styles.min.css";
+
 import { authProvider } from "src/authProvider";
 import { API_URL } from "src/constants";
+import { PostCreate, PostEdit, PostList, PostShow } from "@components/posts";
+import { CategoryList } from "@components/categories";
+import { Header } from "@components/header";
+import { adapter, model } from "src/accessControl";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -17,8 +22,39 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       routerProvider={routerProvider}
       dataProvider={dataProvider(API_URL)}
       warnWhenUnsavedChanges={true}
+      // Header={() => <Header role={role} setRole={setRole} />}
+      accessControlProvider={{
+        can: async ({ resource, action, params }) => {
+          const auth = nookies.get()["auth"];
+          const roles = auth ? JSON.parse(auth).roles : [];
+          const role = roles[0] ?? "";
+
+          const enforcer = await newEnforcer(model, adapter);
+          if (action === "delete" || action === "edit" || action === "show") {
+            const can = await enforcer.enforce(
+              role,
+              `${resource}/${params.id}`,
+              action
+            );
+            return Promise.resolve({ can });
+          }
+
+          if (action === "field") {
+            const can = await enforcer.enforce(
+              role,
+              `${resource}/${params.field}`,
+              action
+            );
+            return Promise.resolve({ can });
+          }
+
+          const can = await enforcer.enforce(role, resource, action);
+          return Promise.resolve({ can });
+        },
+      }}
       resources={[
         { name: "users" },
+        { name: "categories", list: CategoryList },
         {
           name: "posts",
           list: PostList,
